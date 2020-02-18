@@ -13,7 +13,13 @@ steps:
     inputs:
       solution: '**\*.sln'
       msbuildArchitecture: 'x64'
-  
+
+  - task: PowerShell@2
+    displayName: 'PowerShell Script'
+    inputs:
+      targetType: filePath
+      filePath: ./version.ps1
+      
   - task: CopyFiles@2
     inputs:
       sourceFolder: '$(Build.SourcesDirectory)'
