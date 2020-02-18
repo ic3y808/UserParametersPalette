@@ -45,7 +45,7 @@ steps:
       target: '$(Build.SourceVersion)'
       tagSource: 'userSpecifiedTag'
       tag: '$(PROD_VER)'
-      isDraft: true
+      isDraft: false
       changeLogCompareToRelease: 'lastFullRelease'
       changeLogType: 'commitBased'
-      assets: '$(Build.ArtifactStagingDirectory)/$(PROD_VER).zip' 
+      assets: '$(Build.ArtifactStagingDirectory)/UserParams_$(PROD_VER).zip' 
