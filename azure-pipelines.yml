@@ -7,6 +7,7 @@ variables:
   BuildConfiguration: 'Release'
   configuration: release
   platform: x64
+  zipname: 'UserParams_$(PROD_VER)'
 
 steps:
   - task: VSBuild@1
@@ -34,7 +35,7 @@ steps:
       rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
       includeRootFolder: false
       archiveType: 'zip'
-      archiveFile: '$(Build.ArtifactStagingDirectory)/$(PROD_VER).zip'
+      archiveFile: '$(Build.ArtifactStagingDirectory)/$(zipname).zip'
       replaceExistingArchive: true
   
   - task: GitHubRelease@1
@@ -48,4 +49,4 @@ steps:
       isDraft: false
       changeLogCompareToRelease: 'lastFullRelease'
       changeLogType: 'commitBased'
-      assets: '$(Build.ArtifactStagingDirectory)/UserParams_$(PROD_VER).zip' 
+      assets: '$(Build.ArtifactStagingDirectory)/$(zipname).zip' 
