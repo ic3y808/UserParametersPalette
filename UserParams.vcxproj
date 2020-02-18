@@ -102,11 +102,16 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="UserParams.h" />
+    <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="main.js" />
     <None Include="palette.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="UserParams.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

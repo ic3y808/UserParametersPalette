@@ -3,6 +3,7 @@
 #include <thread>
 #include "nlohmann/json.hpp"
 #include "UserParams.h"
+#include "version.h"
 
 using namespace adsk::core;
 using namespace adsk::fusion;
