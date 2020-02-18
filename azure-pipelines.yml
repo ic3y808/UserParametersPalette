@@ -19,7 +19,7 @@ steps:
     inputs:
       targetType: filePath
       filePath: ./version.ps1
-      
+
   - task: CopyFiles@2
     inputs:
       sourceFolder: '$(Build.SourcesDirectory)'
@@ -29,6 +29,14 @@ steps:
         UserParams.dll
       TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
+  - task: ArchiveFiles@2
+    inputs:
+      rootFolderOrFile: '$(Build.ArtifactStagingDirectory'
+      includeRootFolder: true
+      archiveType: 'zip'
+      archiveFile: '$(Build.ArtifactStagingDirectory)/$(PROD_VER).zip'
+      replaceExistingArchive: true
+  
   - task: GitHubRelease@1
     inputs:
       gitHubConnection: "GitHub"
@@ -40,3 +48,4 @@ steps:
       isDraft: true
       changeLogCompareToRelease: 'lastFullRelease'
       changeLogType: 'commitBased'
+      assets: '$(Build.ArtifactStagingDirectory)/$(PROD_VER).zip' 
