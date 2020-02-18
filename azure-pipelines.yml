@@ -1,0 +1,15 @@
+pool:
+  name: Default
+  demands:
+  - MSBuild
+
+variables:
+  BuildConfiguration: 'Release'
+  configuration: release
+  platform: x64
+
+steps:
+  - task: VSBuild@1
+    inputs:
+      solution: '**\*.sln'
+      msbuildArchitecture: 'x64'
