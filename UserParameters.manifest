@@ -1,0 +1,14 @@
+{
+	"autodeskProduct":	"Fusion360",
+	"type":	"addin",
+	"author":	"Jesse Nelson",
+	"description":	{
+		"":	""
+	},
+	"supportedOS":	"windows",
+	"editEnabled":	true,
+	"id":	"ecf43fe1-4bcb-4f6f-8a9d-58df61cb957d",
+	"version":	"0.1.0.0",
+	"runOnStartup":	true,
+	"sourcewindows":	"UserParameters.vcxproj"
+}

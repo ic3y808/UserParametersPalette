@@ -2,7 +2,7 @@
 #include <Fusion/FusionAll.h>
 #include <thread>
 #include "nlohmann/json.hpp"
-#include "UserParams.h"
+#include "UserParameters.h"
 #include "version.h"
 
 using namespace adsk::core;
@@ -18,6 +18,27 @@ Ptr<UserInterface> _ui;
 size_t num;
 Ptr<Palette> _palette;
 Ptr<CustomEvent> customEvent;
+
+double ConvertToUnitValue(Ptr<Parameter> p) {
+	std::string unit = p->unit();
+	double origValue = p->value();
+
+	if (unit == "mm") {
+		return origValue * 10;
+	}
+	if (unit == "cm") {
+		return origValue;
+	}
+}
+
+double ConvertFromUnitValue(std::string unit, double val) {
+	if (unit == "mm") {
+		return val / 10;
+	}
+	if (unit == "cm") {
+		return val;
+	}
+}
 
 json getParameterJSON()
 {
@@ -39,7 +60,14 @@ json getParameterJSON()
 	jresult["result"] = {  };
 	for (Ptr<Parameter> parameter : _design->userParameters())
 	{
-		jresult["result"].push_back({ { "name", parameter->name() }, { "unit", parameter->unit() }, { "value", parameter->value() }, { "expression", parameter->expression() } });
+		jresult["result"].push_back(
+			{
+				{ "name", parameter->name() },
+				{ "unit", parameter->unit() },
+				{ "value", ConvertToUnitValue(parameter) },
+				{ "expression", parameter->expression() }
+			}
+		);
 	}
 	return jresult;
 }
@@ -110,7 +138,7 @@ public:
 				auto expression = adsk::core::ValueInput::createByString(item["expression"]);
 				auto p = _parameters->itemByName(item["name"]);
 				p->expression(item["expression"]);
-				p->value(item["value"]);
+				p->value(ConvertFromUnitValue(item["unit"], item["value"]));
 			}
 		}
 		if (action == "update-parameters")

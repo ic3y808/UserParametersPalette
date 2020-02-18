@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="version.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="UserParameters.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="main.js">
+      <Filter>UI</Filter>
+    </None>
+    <None Include="palette.html">
+      <Filter>UI</Filter>
+    </None>
+    <None Include="version.ps1">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="azure-pipelines.yml">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include=".gitignore">
+      <Filter>Resources</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="UI">
+      <UniqueIdentifier>{a4de0506-62fe-49b5-a869-8e1ae5764004}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{11b4ad2a-3804-43ad-a53b-52e205ff4b3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{2e45de17-789b-4a6c-a2eb-508f4cf1f24d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="UserParameters.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="UserParameters.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="UserParameters.manifest">
+      <Filter>Resources</Filter>
+    </Text>
+  </ItemGroup>
+</Project>

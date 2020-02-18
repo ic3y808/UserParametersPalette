@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -13,19 +13,19 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D7CBB035-8CC0-4576-9C72-5076E079586B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Test</RootNamespace>
+    <RootNamespace>UserParameters</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -90,28 +90,31 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="UserParams.cpp">
+    <ClCompile Include="UserParameters.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="UserParams.manifest">
+    <Text Include="UserParameters.manifest">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </Text>
   </ItemGroup>
   <ItemGroup>
+    <None Include=".gitignore" />
+    <None Include="azure-pipelines.yml" />
+    <None Include="main.js" />
+    <None Include="palette.html" />
+    <None Include="version.ps1" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="UserParams.h" />
+    <ClInclude Include="UserParameters.h" />
     <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="main.js" />
-    <None Include="palette.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="UserParams.rc" />
+    <ResourceCompile Include="UserParameters.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
