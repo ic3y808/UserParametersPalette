@@ -25,7 +25,7 @@ steps:
     inputs:
       sourceFolder: '$(Build.SourcesDirectory)'
       contents: |
-        main.js
+        palette.js
         palette.html
         UserParameters.dll
       TargetFolder: '$(Build.ArtifactStagingDirectory)'
@@ -46,7 +46,7 @@ steps:
       target: '$(Build.SourceVersion)'
       tagSource: 'userSpecifiedTag'
       tag: '$(PROD_VER)'
-      isDraft: true
+      isDraft: false
       changeLogCompareToRelease: 'lastFullRelease'
       changeLogType: 'commitBased'
       assets: '$(Build.ArtifactStagingDirectory)/$(zipname).zip' 
