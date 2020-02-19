@@ -19,6 +19,15 @@ size_t num;
 Ptr<Palette> _palette;
 Ptr<CustomEvent> customEvent;
 
+void CollectVars() {
+	_app = Application::get();
+	if (!_app)
+		return;
+	_product = _app->activeProduct();
+	_design = _product->cast<Design>();
+	_units_manager = _design->fusionUnitsManager();
+}
+
 double ConvertToUnitValue(Ptr<Parameter> p) {
 	std::string unit = p->unit();
 	double origValue = p->value();
@@ -40,22 +49,13 @@ double ConvertFromUnitValue(std::string unit, double val) {
 	}
 }
 
+std::string ConvertExpression(std::string unit, double val) {
+	return std::to_string(val) + " " + unit;
+}
+
 json getParameterJSON()
 {
-	_app = Application::get();
-	if (!_app)
-		return "";
-
-	_product = _app->activeProduct();
-	if (!_product)
-		return "";
-
-	_design = _app->activeProduct();
-	if (!_product)
-		return "";
-
-	_design = _product->cast<Design>();
-	_units_manager = _design->fusionUnitsManager();
+	CollectVars();
 	json jresult;
 	jresult["result"] = {  };
 	for (Ptr<Parameter> parameter : _design->userParameters())
@@ -65,7 +65,12 @@ json getParameterJSON()
 				{ "name", parameter->name() },
 				{ "unit", parameter->unit() },
 				{ "value", ConvertToUnitValue(parameter) },
-				{ "expression", parameter->expression() }
+				{ "expression", parameter->expression() },
+				{ "comment", parameter->comment() },
+				{ "deletable", parameter->isDeletable() },
+				{ "favorite", parameter->isFavorite() },
+				{ "valid", parameter->isValid() },
+				{ "dependent_count", parameter->dependentParameters()->count() },
 			}
 		);
 	}
@@ -80,115 +85,101 @@ public:
 		if (eventArgs)
 		{
 			std::string jsonString = getParameterJSON().dump();
-			_palette->sendInfoToHTML("parameter-data", jsonString);
+			std::string result = _palette->sendInfoToHTML("parameter-data", jsonString);
 		}
 	}
 } onCustomEvent_;
 
-void myThreadRun()
+void threadRun()
 {
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 	std::string additionalInfo = std::to_string(rand());
 	_app->fireCustomEvent(CUSTOM_EVENT_ID1, additionalInfo);
 }
 
-void onSendToHtml()
+void sendUpdateToUi()
 {
-	std::thread myThread(myThreadRun);
+	std::thread myThread(threadRun);
 	myThread.detach();
 }
 
-// Event handler for the palette close event.
-class MyCloseEventHandler : public adsk::core::UserInterfaceGeneralEventHandler
+class DocumentActivatedEventHandler : public adsk::core::DocumentEventHandler
 {
 public:
-	void notify(const Ptr<UserInterfaceGeneralEventArgs>& eventArgs) override
+	void notify(const Ptr<DocumentEventArgs>& eventArgs) override
 	{
+		sendUpdateToUi();
 	}
-} onClose_;
+} _documentActivated;
 
-// Event handler for the palette HTML event.
-class MyHTMLEventHandler : public adsk::core::HTMLEventHandler
+class HTMLEventHandler : public adsk::core::HTMLEventHandler
 {
 public:
 	void notify(const Ptr<HTMLEventArgs>& eventArgs) override
 	{
 		std::string action = eventArgs->action();
-		_app = Application::get();
-		if (!_app)
-			return;
+		CollectVars();
 
-		_product = _app->activeProduct();
-		if (!_product)
-			return;
-
-		_design = _app->activeProduct();
-		if (!_product)
-			return;
-
-		_design = _product->cast<Design>();
-		_units_manager = _design->fusionUnitsManager();
-
-		if (action == "send")
+		if (action == "change-parameters")
 		{
 			_parameters = _design->userParameters();
 
 			json obj = json::parse(eventArgs->data());
 			for (auto item : obj["result"]) {
-				auto expression = adsk::core::ValueInput::createByString(item["expression"]);
-				auto p = _parameters->itemByName(item["name"]);
-				p->expression(item["expression"]);
-				p->value(ConvertFromUnitValue(item["unit"], item["value"]));
+				
+				Ptr<UserParameter> p = _parameters->itemByName(item["name"]);
+				if (p != nullptr) {
+					double val = item["value"];
+					std::string unit = item["unit"];
+					std::string expression = std::to_string(val);
+					expression.append(" ");
+					expression.append(unit);
+					p->expression(expression);
+				}
+				else {
+					Ptr<UserParameter> newParam = _parameters->add(item["name"], adsk::core::ValueInput::createByString(item["expression"]), item["unit"], "");
+					sendUpdateToUi();
+				}
 			}
 		}
 		if (action == "update-parameters")
 		{
-			onSendToHtml();
+			sendUpdateToUi();
 		}
 	}
 } onHTMLEvent_;
 
-// Event handler for the commandExecuted event to show the palette.
 class ShowPaletteCommandExecuteHandler : public adsk::core::CommandEventHandler
 {
 public:
 	void notify(const Ptr<CommandEventArgs>& eventArgs) override
 	{
-		// Create a palette
 		Ptr<Palettes> palettes = _ui->palettes();
 		if (!palettes)
 			return;
 		_palette = palettes->itemById(PALLET_ID);
 		if (!_palette)
 		{
-			_palette = palettes->add(PALLET_ID, PALLET_TITLE, HTML_FILE, true, true, true, PALLET_WIDTH, PALLET_HEIGHT);
+			_palette = palettes->add(PALLET_ID, PALLET_TITLE, HTML_FILE, true, false, true, PALLET_WIDTH, PALLET_HEIGHT);
 			if (!_palette)
 				return;
 
-			// Dock the palette to the right side of Fusion window.
 			_palette->dockingState(PaletteDockStateRight);
 			_palette->dockingOption(adsk::core::PaletteDockingOptions::PaletteDockOptionsToVerticalOnly);
 
-			// Add handler to HTMLEvent of the palette
 			Ptr<HTMLEvent> htmlEvent = _palette->incomingFromHTML();
 			if (!htmlEvent)
 				return;
 
 			htmlEvent->add(&onHTMLEvent_);
 
-			// Add handler to CloseEvent of the palette
-			Ptr<UserInterfaceGeneralEvent> closeEvent = _palette->closed();
-			if (!closeEvent)
-				return;
-			closeEvent->add(&onClose_);
 		}
 		else
 			_palette->isVisible(true);
-		onSendToHtml();
+		sendUpdateToUi();
 	}
 } onShowPaletteCommandExecuted_;
 
-// Event handler for the commandCreated event.
 class ShowPaletteCommandCreatedHandler : public adsk::core::CommandCreatedEventHandler
 {
 public:
@@ -252,6 +243,14 @@ extern "C" XI_EXPORT bool run(const char* context)
 	Ptr<ToolbarControl> ctrl = controls->itemById(TOOLBAR_COMMAND_ID);
 	if (!ctrl)
 		ctrl = controls->addCommand(showPaletteCmdDef);
+
+	Ptr<DocumentEvent> documentActivatedEvent = _app->documentActivated();
+	if (!documentActivatedEvent)
+		return false;
+
+	bool isOk = documentActivatedEvent->add(&_documentActivated);
+	if (!isOk)
+		return false;
 
 	customEvent = _app->registerCustomEvent(CUSTOM_EVENT_ID1);
 	if (!customEvent)

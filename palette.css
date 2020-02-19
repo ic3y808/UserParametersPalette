@@ -1,0 +1,59 @@
+* {
+	font-family: 'Roboto Slab', 'Times New Roman', serif;
+}
+
+input {
+	font-family: 'Open Sans', sans-serif;
+	font-size: smaller;
+}
+
+th a i {
+	position: relative;
+	/* Adjust these values accordingly */
+	top: 7px;
+}
+
+td {
+	font-family: 'Open Sans', sans-serif;
+	font-size: smaller;
+}
+
+.parameter-title {
+	font-weight: bolder;
+	font-size: 1.0em;
+}
+
+input {
+	display: block;
+	padding: 0;
+	margin: 0;
+	border: 0;
+	width: 100%;
+	text-align: end !important;
+}
+
+td {
+	margin: 0;
+	padding: 0;
+}
+
+.icn-spinner {
+	animation: spin-animation 0.5s infinite;
+	display: inline-block;
+}
+
+@keyframes spin-animation {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(359deg);
+	}
+}
+
+.cut-text { 
+  text-overflow: ellipsis;
+  overflow: hidden; 
+  white-space: nowrap;
+}

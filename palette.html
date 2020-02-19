@@ -1,56 +1,101 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
-    <style>
-        *{
-            font-family: 'Open Sans', sans-serif;
-        }
-        input{
-            font-family: 'Open Sans', sans-serif;
-            font-size:smaller;
-        } 
-        td{
-            font-family: 'Open Sans', sans-serif;
-            font-size:smaller;
-        }
-    </style>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+	<link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons' , rel="stylesheet">
+	<link href="./palette.css" rel="stylesheet">
 </head>
-<body id="main-content" ng-app="userprefs" ng-controller="mainController">
-    <div class="container-fluid">
-        <div class="row">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="row">Parameter Name</th>
-                        <th class="text-right" style="width:1px !important;text-align:end !important;" scope="row">Value</th>
-                        <th class="text-right" style="width:1px !important;text-align:end !important;" scope="row">Units</th>
-                    </tr>
-                </thead>
-                <tbody >
-                    <tr ng-repeat="item in parameters.result">
-                       <td>{{item.name}}</td>
-                       <td  class="text-right" style="width:1px !important;text-align:end !important;">
-                            <input type="number" step="{{getUnitStep(item.unit)}}" ng-model="item.value" ng-change="itemChanged()"/></td>
-                       <td class="text-right" style="width:1px !important;text-align:end !important;">
-                           <select ng-model="item.unit" ng-change="itemChanged()">
-                               <option ng-repeat="opt in possibleUnits" value="{{opt}}">{{opt}}</option>
-                           </select>
-                       </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+
+<body id="main-content" ng-app="userprefs" ng-controller="mainController" ng-cloak>
+	<div class="container-fluid">
+
+		<div class="row">
+			<table class="table table-bordered table-condensed table-responsive">
+				<thead>
+					<tr>
+						<th scope="row">
+							Parameters
+							<a href="#" ng-click="addParameter()">
+								<i class="material-icons">add_circle_outline</i>
+							</a>
+							<a href="#" ng-click="refreshParameters()" class="pull-right">
+								<i id="refreshIcon" class="material-icons">autorenew</i>
+							</a>
+						</th>
+						<th class="text-right" scope="row">Value</th>
+						<th class="text-right" style="width:1px !important;text-align:end !important;" scope="row">Units</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="item in parameters.result">
+						<td class="parameter-title" style="text-align: left; vertical-align: middle;">
+							<div class="btn btn-block cut-text" ng-class="isItemValid(item)" type="button" style="text-align: left; vertical-align: middle;">
+								{{item.name}} <span class="badge pull-right" data-toggle="tooltip" data-placement="top" title="{{item.name}} has {{item.dependent_count}} dependent use/s">{{item.dependent_count}}</span>
+							</div>
+						</td>
+						<td class="text-right" style="text-align:end !important;">
+							<input type="number" class="form-control" step="{{getUnitStep(item.unit)}}" ng-model="item.value"
+								   ng-change="itemChanged()" />
+						</td>
+						<td class="text-right" style="width:1px !important;text-align:end !important;">
+							{{item.unit}}
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div id="createParameterModal" class="modal" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Add New Parameter</h5>
+				</div>
+				<div class="modal-body">
+					<table class="table table-bordered table-condensed table-responsive">
+						<thead>
+						<th>Name</th>
+						<th>Value</th>
+						<th>Unit</th>
+						</thead>
+						<tbody>
+
+							<tr>
+								<td class="parameter-title" style="text-align: left; vertical-align: middle;">
+									<input id="newParamName" type="text" class="form-control" ng-model="newTempParameter.name" placeholder="Enter A Name" />
+								</td>
+								<td class="text-right" style="text-align:end !important;">
+									<input id="newParamValue" type="number" class="form-control" ng-model="newTempParameter.value"
+										   step="{{getUnitStep(newTempParameter.unit)}}" />
+								</td>
+								<td class="text-right" style="width:100px !important;text-align:end !important;">
+									<select class="form-control" ng-model="newTempParameter.unit">
+										<option ng-repeat="opt in possibleUnits" value="{{opt}}">{{opt}}</option>
+									</select>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" ng-click="saveNewParameter()" ng-disabled="canSaveNewParameter()">
+						Save
+						changes
+					</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
-<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"		integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"		integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.9/angular.min.js" crossorigin="anonymous"></script>
-<script src="./main.js"></script>
+<script src="./palette.js"></script>
 
 <script>
-
 </script>
 </html>

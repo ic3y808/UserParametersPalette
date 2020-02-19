@@ -104,8 +104,9 @@
   <ItemGroup>
     <None Include=".gitignore" />
     <None Include="azure-pipelines.yml" />
-    <None Include="main.js" />
+    <None Include="palette.css" />
     <None Include="palette.html" />
+    <None Include="palette.js" />
     <None Include="version.ps1" />
   </ItemGroup>
   <ItemGroup>

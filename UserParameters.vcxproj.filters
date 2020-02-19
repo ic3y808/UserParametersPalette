@@ -12,9 +12,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="main.js">
-      <Filter>UI</Filter>
-    </None>
     <None Include="palette.html">
       <Filter>UI</Filter>
     </None>
@@ -26,6 +23,12 @@
     </None>
     <None Include=".gitignore">
       <Filter>Resources</Filter>
+    </None>
+    <None Include="palette.css">
+      <Filter>UI</Filter>
+    </None>
+    <None Include="palette.js">
+      <Filter>UI</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
